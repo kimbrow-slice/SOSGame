@@ -18,6 +18,7 @@ namespace SOSGame.GUI
         private TextBlock? titleText;
         private RadioButton? playerVsAiRadio;
         private RadioButton? twoPlayerRadio;
+        private RadioButton? aiVsAiRadio;
         private TextBox? gridSizeInput;
         private CheckBox? saveFileCheckBox;
 
@@ -35,7 +36,8 @@ namespace SOSGame.GUI
 
             // Player options based from class names
             playerVsAiRadio = this.FindControl<RadioButton>("PlayerVsAIRadio");
-            twoPlayerRadio = this.FindControl<RadioButton>("AiVsAiRadio");
+            twoPlayerRadio = this.FindControl<RadioButton>("PlayerVsPlayerRadio");
+            aiVsAiRadio = this.FindControl<RadioButton>("AiVsAIRadio");
 
             // User inputs based on class names
             gridSizeInput = this.FindControl<TextBox>("GridSizeInput");

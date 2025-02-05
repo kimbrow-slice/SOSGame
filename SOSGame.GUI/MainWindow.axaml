@@ -139,6 +139,10 @@
         <!-- Player Selection Radio Buttons -->
 		<Border Classes="controlPanel">
 			<StackPanel Orientation="Vertical">
+				<RadioButton Name="PlayerVsPlayerRadio"
+                             Content="Player vs Player"
+                             GroupName="GameMode"
+							 IsChecked="False"/>
 				<RadioButton Name="PlayerVsAIRadio"
                              Content="Player vs AI"
                              GroupName="GameMode"
@@ -146,7 +150,7 @@
 				<RadioButton Name="AiVsAiRadio"
                              Content="AI vs AI"
                              GroupName="GameMode"
-							 IsChecked="True"/>
+							 IsChecked="False"/>
 			</StackPanel>
 		</Border>
     </Grid>
