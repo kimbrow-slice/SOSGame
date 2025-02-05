@@ -23,3 +23,4 @@ This project is graded based on the development of the SOS game. Two Players aim
 1. Implement the logic to save the game data to CSV
 2. Create a dynamic scoreboard into the GUI
 3. Create a dedicated Styles.axaml file for all GUI styling
+4. Add a .gitignore for all build files
