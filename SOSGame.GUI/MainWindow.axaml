@@ -31,7 +31,7 @@
             <Setter Property="BorderBrush" Value="#FEFAF7"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="Foreground" Value="#FEFAF7"/>
-			<Setter Property="Padding" Value="10,5,10,5"/>
+			<Setter Property="Margin" Value="10,5,10,5"/>
         </Style>
 
         <Style Selector="CheckBox:checked">

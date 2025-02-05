@@ -70,16 +70,16 @@ namespace SOSGame.GUI
 
 
         // Trying to update grid sizebased on our users input
-  
+
         private async Task ApplyGridSize()
         {
             if (gridSizeInput == null || gridControl == null)
                 return;
 
             try
-            {   
+            {
                 if (int.TryParse(gridSizeInput.Text, out int newSize))
-                {   
+                {
                     // Input validation checking for postive integers above 3, if it breaks our validation check, prompt the user with an error message describing why it occured
                     if (newSize < 4)
                     {
