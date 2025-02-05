@@ -1,5 +1,5 @@
 # SOSGame
-This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against an AI model or select an AI vs AI game. The final implementation will contain two game modes: Simple Game and General Game. 
+This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against as Player vs Player, Player vs AI model, or select an AI vs AI game (using two separate LLM's). The final implementation will contain two game modes: Simple Game and General Game. 
 
 
 ## Game Features
@@ -23,8 +23,3 @@ This project is graded based on the development of the SOS game. Two Players aim
 1. Implement the logic to save the game data to CSV
 2. Create a dynamic scoreboard into the GUI
 3. Create a dedicated Styles.axaml file for all GUI styling
-
-
-### To Do for Sprint 2:
-1. Implement the logic to have player vs AI model
-2. Refactor code for better readability
