@@ -1,0 +1,11 @@
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\bin\Debug\net9.0\SOSGame.Logic.deps.json
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\bin\Debug\net9.0\SOSGame.Logic.dll
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\bin\Debug\net9.0\SOSGame.Logic.pdb
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\SOSGame.Logic.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\SOSGame.Logic.AssemblyInfoInputs.cache
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\SOSGame.Logic.AssemblyInfo.cs
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\SOSGame.Logic.csproj.CoreCompileInputs.cache
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\SOSGame.Logic.dll
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\refint\SOSGame.Logic.dll
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\SOSGame.Logic.pdb
+C:\Users\RH\source\repos\SOSGAME\SOSGame.Logic\obj\Debug\net9.0\ref\SOSGame.Logic.dll
