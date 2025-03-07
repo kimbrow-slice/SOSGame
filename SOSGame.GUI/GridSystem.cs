@@ -2,25 +2,36 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using System;
+using SOSGame.Logic;
+using SOSGame.Controller;
 
 namespace SOSGame.GUI
 {
-    public class GridControl : Grid
+    public class GridSystem : Grid
     {
-        private int gridSize = 8;
-        private bool isPlayerOneTurn = true;
-
-        public GridControl()
+        private int gridSize = 3; // Default grid size
+        private bool isPlayerOneTurn = true; 
+        private MainWindow? parentWindow; // Reference to MainWindow for selected letter
+        
+        // Default constructor required for initialization
+        public GridSystem() 
         {
             InitializeGrid();
         }
 
-        // Function to set the grid size and handle exception if player inputs a size too small for the grid size.
+        // Associates the grid with the main window
+        public void SetParent(MainWindow parent)
+        {
+            parentWindow = parent;
+            System.Diagnostics.Debug.WriteLine("Parent window set."); // Debugging
+        }
+
+        // Sets grid size and ensures it's within allowed limits
         public void SetGridSize(int newSize)
         {
-            if (newSize < 4)
+            if (newSize < 3 || newSize > 12)
             {
-                throw new ArgumentException("ERR: The grids size MUST be greater than 3.");
+                throw new ArgumentException("ERR: The grid size must be between 3 and 12.");
             }
 
             gridSize = newSize;
@@ -28,9 +39,15 @@ namespace SOSGame.GUI
             this.ColumnDefinitions.Clear();
             this.RowDefinitions.Clear();
             InitializeGrid();
+
+            System.Diagnostics.Debug.WriteLine($"Grid initialized with size: {gridSize}x{gridSize}"); // Debugging
+        }
+        public int GetGridSize()
+        {
+            return gridSize;
         }
 
-        // Provide initial deminsions for the grid system. Allow the user to update the overall number of boxes in the grid system. As well as basic styling for our grid.
+        // Initializes the grid UI elements
         private void InitializeGrid()
         {
             this.Width = 400;
@@ -59,31 +76,56 @@ namespace SOSGame.GUI
                         VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch
                     };
 
-                    cellButton.Click += (sender, args) => OnCellClicked(cellButton);
+                    int r = row, c = col;
+                    cellButton.Click += (sender, args) => OnCellClicked(cellButton, r, c);
 
                     Grid.SetRow(cellButton, row);
                     Grid.SetColumn(cellButton, col);
                     this.Children.Add(cellButton);
                 }
             }
+
+            System.Diagnostics.Debug.WriteLine("Grid buttons initialized."); // Debugging
         }
-        // Placeholder to add the ability to allow the user to select wheather they would like to pick letter S or O
-        private void OnCellClicked(Button button)
+
+        // Handles cell click event
+        private void OnCellClicked(Button button, int row, int col)
         {
-            if (button.Content == null || button.Content.ToString() == "")
+            System.Diagnostics.Debug.WriteLine($" Cell Clicked: Row {row}, Col {col}");
+
+            if (parentWindow == null)
             {
-                if (isPlayerOneTurn)
-                {
-                    button.Content = "S";
-                    button.Foreground = Brushes.Blue;
-                }
-                else
-                {
-                    button.Content = "O";
-                    button.Foreground = Brushes.Red;
-                }
-                isPlayerOneTurn = !isPlayerOneTurn;
+                System.Diagnostics.Debug.WriteLine(" ERROR: MainWindow reference not set.");
+                return;
             }
+
+            if (button.Content != null && button.Content.ToString() != "")
+            {
+                System.Diagnostics.Debug.WriteLine(" ERROR: Cell is already occupied.");
+                return;
+            }
+
+            char? selectedLetter = parentWindow.GetSelectedLetter();
+            System.Diagnostics.Debug.WriteLine($" Selected Letter: {selectedLetter}");
+
+            if (selectedLetter == null)
+            {
+                System.Diagnostics.Debug.WriteLine(" ERROR: No letter selected.");
+                return;
+            }
+
+            // Place the letter in the grid
+            button.Content = selectedLetter.Value;
+            button.Foreground = Brushes.Black;
+
+            System.Diagnostics.Debug.WriteLine($"Move placed at Row {row}, Col {col}: {selectedLetter.Value}");
+
+            isPlayerOneTurn = !isPlayerOneTurn;
+
+            // Uncheck checkboxes to force re-selection for next move
+            parentWindow.ClearLetterSelection();
         }
+
+
     }
 }

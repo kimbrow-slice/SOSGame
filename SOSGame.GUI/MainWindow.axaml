@@ -3,155 +3,231 @@
         xmlns:local="clr-namespace:SOSGame.GUI"
         x:Class="SOSGame.GUI.MainWindow"
         Title="SOS Game"
-        Width="1200" Height="600"
+        Width="1500" Height="800"
         Background="Black">
 
 	<!-- This is the current style section. This will be moved to an external Styles.axaml for readability and better structure. -->
-    <Window.Styles>
-        <!-- TextBlock Styles -->
-        <Style Selector="TextBlock.title">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="Margin" Value="10"/>
-        </Style>
+	<Window.Styles>
+		<!-- TextBlock Styles -->
+		<Style Selector="TextBlock.title">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="Margin" Value="10"/>
+		</Style>
 
-        <Style Selector="TextBlock.scoreboard">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Margin" Value="0,40,0,10"/>
-        </Style>
+		<Style Selector="TextBlock.scoreboard">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="Margin" Value="0,40,0,10"/>
+		</Style>
 
-        <!-- CheckBox Styles -->
-        <Style Selector="CheckBox">
-            <Setter Property="Background" Value="#6A6566"/>
-            <Setter Property="BorderBrush" Value="#FEFAF7"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Foreground" Value="#FEFAF7"/>
+		<!-- CheckBox Styles -->
+		<Style Selector="CheckBox">
+			<Setter Property="Background" Value="#6A6566"/>
+			<Setter Property="BorderBrush" Value="#FEFAF7"/>
+			<Setter Property="BorderThickness" Value="2"/>
+			<Setter Property="Foreground" Value="#FEFAF7"/>
 			<Setter Property="Margin" Value="10,5,10,5"/>
-        </Style>
+		</Style>
 
-        <Style Selector="CheckBox:checked">
-            <Setter Property="Background" Value="#96B6F5"/>
-            <Setter Property="BorderBrush" Value="#FEFAF7"/>
+		<Style Selector="CheckBox:checked">
+			<Setter Property="Background" Value="#96B6F5"/>
+			<Setter Property="BorderBrush" Value="#FEFAF7"/>
 			<Setter Property="Foreground" Value="#6A6566"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
+			<Setter Property="BorderThickness" Value="2"/>
+		</Style>
 
-        <Style Selector="CheckBox:pointerover /template/ Border#border">
-            <Setter Property="Background" Value="#6A6566"/>
-            <Setter Property="BorderBrush" Value="#FEFAF7"/>
-            <Setter Property="BorderThickness" Value="3"/>
-        </Style>
+		<Style Selector="CheckBox:pointerover /template/ Border#border">
+			<Setter Property="Background" Value="#6A6566"/>
+			<Setter Property="BorderBrush" Value="#FEFAF7"/>
+			<Setter Property="BorderThickness" Value="3"/>
+		</Style>
 
-        <!-- Game Board Styles -->
-        <Style Selector="Border.gameBoard">
-            <Setter Property="Background" Value="Gray"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Width" Value="400"/>
-            <Setter Property="Height" Value="400"/>
-        </Style>
+		<!-- Game Board Styles -->
+		<Style Selector="Border.gameBoard">
+			<Setter Property="Background" Value="Gray"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Width" Value="400"/>
+			<Setter Property="Height" Value="400"/>
+		</Style>
 
-        <!-- TextBox Styles -->
-        <Style Selector="TextBox.gridSize">
-            <Setter Property="Background" Value="#6A6566"/>
-            <Setter Property="Foreground" Value="#FEFAF7"/>
-            <Setter Property="Width" Value="50"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,10,0"/>
-        </Style>
+		<!-- TextBox Styles -->
+		<Style Selector="TextBox.gridSize">
+			<Setter Property="Background" Value="#6A6566"/>
+			<Setter Property="Foreground" Value="#FEFAF7"/>
+			<Setter Property="Width" Value="50"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="0,0,10,0"/>
+		</Style>
 
-        <!-- Radio Button Styles -->
-        <Style Selector="RadioButton">
-            <Setter Property="Foreground" Value="#FEFAF7"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
+		<!-- Radio Button Styles -->
+		<Style Selector="RadioButton">
+			<Setter Property="Foreground" Value="#FEFAF7"/>
+			<Setter Property="Margin" Value="5"/>
+		</Style>
 
-        <!-- Container Styles -->
-        <Style Selector="Border.controlPanel">
-            <Setter Property="Background" Value="#6A6566"/>
-            <Setter Property="CornerRadius" Value="5"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="Margin" Value="20"/>
-        </Style>
+		<!-- Container Styles -->
+		<Style Selector="Border.controlPanel">
+			<Setter Property="Background" Value="#6A6566"/>
+			<Setter Property="CornerRadius" Value="5"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="VerticalAlignment" Value="Bottom"/>
+			<Setter Property="Margin" Value="20"/>
+		</Style>
 
-        <Style Selector="StackPanel.bottomControls">
-            <Setter Property="Orientation" Value="Horizontal"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="Margin" Value="20"/>
-        </Style>
-    </Window.Styles>
+		<Style Selector="StackPanel.bottomControls">
+			<Setter Property="Orientation" Value="Horizontal"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Bottom"/>
+			<Setter Property="Margin" Value="20"/>
+		</Style>
+	</Window.Styles>
 
-    <!-- Main UI Grid -->
-    <Grid>
-        <!-- Welcome Message -->
-        <TextBlock Name="TitleText"
+	<!-- Main UI Grid -->
+	<Grid>
+		<!-- Welcome Message -->
+		<TextBlock Name="TitleText"
                    Classes="title"
                    Text="Welcome to Jeff Kimbrow's SOS Game"/>
 
-        <!-- Scoreboard Section -->
-        <TextBlock Name="ScoreBoard"
+		<!-- Scoreboard Section -->
+		<TextBlock Name="ScoreBoard"
                    Classes="scoreboard"
                    Text="Red Player: [ 0 | 0 ] : Blue Player"/>
-
-        <!-- Save Game Score Section -->
+		
+		<!-- Save Game Score Section -->
 		<StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Margin="10,50,0,0">
-
 			<CheckBox Name="SaveScoreCheckBox"
                       Content="Save Game Score"
-					  Padding="10, 15, 10, 15"
-					  IsChecked="False"
-				      Margin="0,5,0,5"/>
-					  
+                      Padding="10, 15, 10, 15"
+                      IsChecked="False"
+                      Margin="0,5,0,5"/>
+		</StackPanel>
+		
+				<!-- Start Game Button -->
+		<StackPanel Orientation="Horizontal"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"
+					Margin="150, 50, 50, 50">
+			
+		<Button	    Name="StartGameButton"
+				    Content="Start Game"
+					Background="Green"
+					Foreground="White"
+				    Width="200"
+			        Height="40"
+					FontSize="18"
+					Padding="50,10,10,10"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center"/>
+		</StackPanel>
+		
+		<!-- Letter Selection Options-->
+		<StackPanel Orientation="Vertical"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"
+					Margin="10,50,0,0">
+		<CheckBox	Name="SelectSCheckBox"
+					Content="Select S"
+					Padding="10, 15, 10, 15"
+					IsChecked="False"/>
+		<CheckBox	Name="SelectOCheckBox"
+					Content="Select O"
+					Padding="10, 15, 10, 15"
+					IsChecked="False"/>
 		</StackPanel>
 
-        <!-- Game Board UI -->
-        <Border Name="GameBoard"
-                Classes="gameBoard">
-			
-            <local:GridControl Name="GameGrid"/>
-        </Border>
 
-        <!-- Grid Size Input Section -->
+		<!-- Player Labels -->
+		<StackPanel Orientation="Vertical"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Margin="20,0,0,0">
+			<TextBlock Name="Player1Label"
+                       Text="Player 1 - Red"
+                       Foreground="Red"
+                       FontSize="20"/>
+		</StackPanel>
+
+		<StackPanel Orientation="Vertical"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,20,0">
+			<TextBlock Name="Player2Label"
+                       Text="Player 2 - Blue"
+                       Foreground="Blue"
+                       FontSize="20"/>
+		</StackPanel>
+
+		<!-- Game Board UI -->
+		<Border Name="GameBoard" Classes="gameBoard">
+			<local:GridSystem Name="GameGrid"/>
+		</Border>
+
+
+		<!-- Grid Size Input Section -->
 		<StackPanel Classes="bottomControls">
-
 			<TextBox Name="GridSizeInput"
                      Classes="gridSize"
-                     Text="8"/>
-
-			<TextBlock Text="Hit Enter to update grid size"
+                     Text="3"/>
+			<TextBlock Text="Input a number greater than or equal to 3."
                        Foreground="White"
                        VerticalAlignment="Center"
                        Margin="10,0,0,0"/>
 		</StackPanel>
 
-        <!-- Player Selection Radio Buttons -->
-		<Border Classes="controlPanel">
-			<StackPanel Orientation="Vertical">
+		<!-- Game Selection Panel -->
+		<Border Classes="controlPanel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,20,0,20">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Select Game Mode:"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           Margin="10"/>
+				<RadioButton Name="SimpleGameRadio"
+                             Content="Simple Game"
+                             GroupName="GameType"
+                             IsChecked="False"/>
+				<RadioButton Name="GeneralGameRadio"
+                             Content="General Game"
+                             GroupName="GameType"
+                             IsChecked="False"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Player Selection Panel -->
+		<Border Classes="controlPanel"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="20,0,20,20">
+			
+			<StackPanel Orientation="Vertical" 
+						HorizontalAlignment="Center">
 				<RadioButton Name="PlayerVsPlayerRadio"
                              Content="Player vs Player"
                              GroupName="GameMode"
-							 IsChecked="False"/>
+                             IsChecked="False"/>
 				<RadioButton Name="PlayerVsAIRadio"
                              Content="Player vs AI"
                              GroupName="GameMode"
-							 IsChecked="False"/>
-				<RadioButton Name="AiVsAiRadio"
-                             Content="AI vs AI"
+                             IsChecked="False"/>
+				<RadioButton Name="VulnerableProgramState"
+                             Content="Vulnerable Program State"
                              GroupName="GameMode"
-							 IsChecked="False"/>
+                             IsChecked="False"/>
 			</StackPanel>
 		</Border>
-    </Grid>
+	</Grid>
 </Window>
