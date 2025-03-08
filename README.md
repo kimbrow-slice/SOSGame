@@ -1,12 +1,12 @@
 # SOSGame
-This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against as Player vs Player, Player vs AI model, or select an a Vulnerable Game State which allows the exploitation of a Use After Free memory issue. The final implementation will contain two game modes: Simple Game and General Game. 
+This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against as Player vs Player, Player vs AI, or select an a Vulnerable Game State which allows the exploitation of a Use After Free memory issue. The final implementation will contain two game modes: **Simple Game** and **General Game**. 
 
 ## Game Features
 - Simple Game Mode - End game condition is determined by the first SOS sequence.
 - General Game Mode - Final score is dictated by the collective number of SOS sequences completed by each player.
 - Human vs Human Player Mode
-- Player vs Computer Mode
-- feat[Software Security]: Vulnerable Game State - Allow a bad actor to dispose a stream to or introduce a race condition where it is freed but still accessible.
+- Player vs AI Mode
+- **New Feature [Software Security]:** Vulnerable Game State - Allow a bad actor to dispose a stream to or introduce a race condition where it is freed but still accessible.
 
 ## Requirements
 - Develop game with an object-oriented programming language (C#)
@@ -36,8 +36,8 @@ This project is graded based on the development of the SOS game. Two Players aim
 
 
 ### To Do for Sprint 3:
-1. feat[LOGIC]:Complete Win Condition checks for both SIMPLE and GENERAL game modes
-2. feat[GUI]:Create a dynamic scoreboard into the GUI
-3. feat[GUI]:GUI update for SOS sequence completion
-4. feat[Code Readability]:Create a dedicated Styles.axaml file for all GUI styling
-5. feat[Code Readability]:Add a .gitignore for all build files
+1. **New Feature[LOGIC]:** Complete Win Condition checks for both SIMPLE and GENERAL game modes
+2. **New Feature[GUI]:** Create a dynamic scoreboard into the GUI
+3. **New Feature[GUI]:GUI** Update for SOS sequence completion
+4. **New Feature[Code Readability]:** Create a dedicated Styles.axaml file for all GUI styling
+5. **New Feature[Code Readability]:** Add a .gitignore for all build files
