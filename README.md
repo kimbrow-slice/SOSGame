@@ -14,13 +14,6 @@ This project is graded based on the development of the SOS game. Two Players aim
 - GUI Library to build the graphical interface of the game (AvaloniaUI)
 
 ## Game Setup
-**Running from source code - Development Mode:**
-1. Clone the repository to your local machine e.g., git clone https://github.com/kimbrow-slice/SOSGame.git
-2. Open the game file in Visual Studio Code or your choosen IDE.
-3. Ensure the project dependencies are installed by running `dotnet restore`
-4. To run the game in debug mode, in Visual Studio press `F5` or Click `Start`
-5. Follow the instructions on your screen to start your game!
-
 **Running the Released Version**:
 1. Clone the repository to your local machine e.g., git clone https://github.com/kimbrow-slice/SOSGame.git
 2. Open a command line interface and navigate to the directory where the project was downloaded, e.g., `cd C:\Users\USRENAMEHERE\Downloads\SOSGAME`
