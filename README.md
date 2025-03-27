@@ -28,9 +28,9 @@ This project is graded based on the development of the SOS game. Two Players aim
  - [C# Style Guide](https://google.github.io/styleguide/csharp-style.html)
 
 
-### To Do for Sprint 3:
-1. **New Feature[LOGIC]:** Complete Win Condition checks for both SIMPLE and GENERAL game modes
-2. **New Feature[GUI]:** Create a dynamic scoreboard into the GUI
-3. **New Feature[GUI]:GUI** Update for SOS sequence completion
-4. **New Feature[Code Readability]:** Create a dedicated Styles.axaml file for all GUI styling
-5. **New Feature[Code Readability]:** Add a .gitignore for all build files
+### Sprint 3 Features:
+1. **Completed Feature[LOGIC]:** Complete Win Condition checks for both SIMPLE and GENERAL game modes
+2. **Completed Feature[GUI]:** Create a dynamic scoreboard into the GUI
+3. **Completed Feature[GUI]:GUI** Update for SOS sequence completion
+4. **Completed Feature[Code Readability]:** Create a dedicated Styles.axaml file for all GUI styling
+5. **Completed Feature[Code Readability]:** Add a .gitignore for all build files
