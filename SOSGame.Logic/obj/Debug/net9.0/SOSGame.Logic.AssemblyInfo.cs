@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SOSGame.Logic")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f0da17cc50eae5acaa08b04598ff3fade3207ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ecf09ee7dabd99e109c7b28875744a156f224161")]
 [assembly: System.Reflection.AssemblyProductAttribute("SOSGame.Logic")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SOSGame.Logic")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

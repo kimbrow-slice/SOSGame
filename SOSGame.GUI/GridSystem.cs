@@ -1,58 +1,86 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using System;
 using SOSGame.Logic;
-using SOSGame.Controller;
 
 namespace SOSGame.GUI
 {
     public class GridSystem : Grid
     {
-        private int gridSize = 3; // Default grid size
-        private bool isPlayerOneTurn = true; 
-        private MainWindow? parentWindow; // Reference to MainWindow for selected letter
-        
-        // Default constructor required for initialization
-        public GridSystem() 
+        private int gridSize = 3;
+        private bool isPlayerOneTurn = true;
+        private MainWindow? parentWindow; // Reference to the main window for accessing UI elements.
+        private BaseGame? game; // Holds the game logic instance (can be either SimpleGame or GeneralGame).
+
+        // Setting IsHitTestVisible to false lets click events pass to underlying grid buttons.
+        private Canvas overlayCanvas = new Canvas
+        {
+            IsHitTestVisible = false
+        };
+
+        // Initializes the grid UI when a GridSystem instance is created.
+        public GridSystem()
         {
             InitializeGrid();
         }
 
-        // Associates the grid with the main window
+        // Sets the parent window to enable communication with other UI components.
         public void SetParent(MainWindow parent)
         {
             parentWindow = parent;
-            System.Diagnostics.Debug.WriteLine("Parent window set."); // Debugging
         }
 
-        // Sets grid size and ensures it's within allowed limits
+        // Sets the grid size, validates it, resets the board, and instantiates the appropriate game mode.
         public void SetGridSize(int newSize)
         {
             if (newSize < 3 || newSize > 12)
-            {
-                throw new ArgumentException("ERR: The grid size must be between 3 and 12.");
-            }
+                throw new ArgumentException("ERR: The grid size must be between \n 3 and 12.");
 
             gridSize = newSize;
+            ResetBoard(); // Clears and reinitializes the grid and overlay.
+
+            if (parentWindow != null)
+            {
+                // Choose the game mode based on the parent window's selection.
+                if (parentWindow.IsGeneralGameModeSelected)
+                {
+                    game = new GeneralGame(gridSize, parentWindow.ShowVictoryBanner);
+                }
+                else
+                {
+                    game = new SimpleGame(gridSize, parentWindow.ShowVictoryBanner);
+                }
+            }
+            else
+            {
+                // Default to SimpleGame if no parent window is set.
+                game = new SimpleGame(gridSize);
+            }
+        }
+
+        // Returns the current grid size.
+        public int GetGridSize() => gridSize;
+
+        // Clear all UI elements and SOS lines, then reinitialize the grid for start/new game.
+        public void ResetBoard()
+        {
+            // Remove all existing UI elements and definitions.
             this.Children.Clear();
             this.ColumnDefinitions.Clear();
             this.RowDefinitions.Clear();
-            InitializeGrid();
-
-            System.Diagnostics.Debug.WriteLine($"Grid initialized with size: {gridSize}x{gridSize}"); // Debugging
-        }
-        public int GetGridSize()
-        {
-            return gridSize;
+            overlayCanvas.Children.Clear();
+            InitializeGrid(); // Rebuild the grid and overlay canvas.
         }
 
-        // Initializes the grid UI elements
+        // Base of UI Construction creates rows, columns, and buttons for each cell, and attaches event handlers.
         private void InitializeGrid()
         {
             this.Width = 400;
             this.Height = 400;
 
+            // Create grid structure based on gridSize.
             for (int i = 0; i < gridSize; i++)
             {
                 this.ColumnDefinitions.Add(new ColumnDefinition());
@@ -76,6 +104,7 @@ namespace SOSGame.GUI
                         VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch
                     };
 
+                    // Capture row and column values and attach the click event handler.
                     int r = row, c = col;
                     cellButton.Click += (sender, args) => OnCellClicked(cellButton, r, c);
 
@@ -85,47 +114,78 @@ namespace SOSGame.GUI
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine("Grid buttons initialized."); // Debugging
+            // Add the overlay canvas to display SOS lines on top of the grid.
+            Grid.SetRowSpan(overlayCanvas, gridSize);
+            Grid.SetColumnSpan(overlayCanvas, gridSize);
+            this.Children.Add(overlayCanvas);
         }
 
-        // Handles cell click event
+        // Handles a cell button click by verifying game state, processes the move, updates the UI, and redraws SOS lines.
         private void OnCellClicked(Button button, int row, int col)
         {
-            System.Diagnostics.Debug.WriteLine($" Cell Clicked: Row {row}, Col {col}");
-
-            if (parentWindow == null)
-            {
-                System.Diagnostics.Debug.WriteLine(" ERROR: MainWindow reference not set.");
+            if (parentWindow == null || game == null)
                 return;
-            }
 
-            if (button.Content != null && button.Content.ToString() != "")
-            {
-                System.Diagnostics.Debug.WriteLine(" ERROR: Cell is already occupied.");
+            // In SimpleGame mode, ignore clicks if the game is currently frozen (post-win state).
+            if (game is SOSGame.Logic.SimpleGame sg && sg.IsFrozen)
                 return;
-            }
 
+            // Ignore the click if the cell already contains a letter.
+            if (!string.IsNullOrEmpty(button.Content?.ToString()))
+                return;
+
+            // Retrieve the letter selected by the player from the parent window.
             char? selectedLetter = parentWindow.GetSelectedLetter();
-            System.Diagnostics.Debug.WriteLine($" Selected Letter: {selectedLetter}");
-
             if (selectedLetter == null)
-            {
-                System.Diagnostics.Debug.WriteLine(" ERROR: No letter selected.");
                 return;
-            }
 
-            // Place the letter in the grid
+            // Proceed only if the move is valid.
+            bool moveSuccess = game.MakeMove(row, col, selectedLetter.Value);
+            if (!moveSuccess)
+                return;
+
             button.Content = selectedLetter.Value;
             button.Foreground = Brushes.Black;
 
-            System.Diagnostics.Debug.WriteLine($"Move placed at Row {row}, Col {col}: {selectedLetter.Value}");
-
-            isPlayerOneTurn = !isPlayerOneTurn;
-
-            // Uncheck checkboxes to force re-selection for next move
+            // Refresh scoreboard and current player's turn display.
+            parentWindow.UpdateScoreboard(game.GetPlayerOneScore(), game.GetPlayerTwoScore());
+            isPlayerOneTurn = game.IsPlayerOneTurn();
+            parentWindow.UpdatePlayerTurnDisplay(isPlayerOneTurn);
             parentWindow.ClearLetterSelection();
+
+            // Update overlay canvas to display any new SOS lines.
+            UpdateOverlayCanvas(game);
         }
 
+        // Draws lines connecting cells that form valid SOS sequences using data from the business logic.
+        private void UpdateOverlayCanvas(BaseGame baseGame)
+        {
+            overlayCanvas.Children.Clear();
 
+            // Determine each cell's width and height based on the current grid dimensions.
+            double cellWidth = this.Bounds.Width / gridSize;
+            double cellHeight = this.Bounds.Height / gridSize;
+
+            // Retrieve each SOS line from the game logic and draw it.
+            foreach (var line in baseGame.GetSOSLines())
+            {
+                double startX = (line.StartCol + 0.5) * cellWidth;
+                double startY = (line.StartRow + 0.5) * cellHeight;
+                double endX = (line.EndCol + 0.5) * cellWidth;
+                double endY = (line.EndRow + 0.5) * cellHeight;
+
+                var shapeLine = new Line
+                {
+                    StartPoint = new Point(startX, startY),
+                    EndPoint = new Point(endX, endY),
+                    StrokeThickness = 4,
+                    // Choose the line color based on the player's color (Red or Blue)
+                    Stroke = line.PlayerColor.Equals("Red", StringComparison.OrdinalIgnoreCase)
+                                ? Brushes.Red : Brushes.Blue
+                };
+
+                overlayCanvas.Children.Add(shapeLine);
+            }
+        }
     }
 }
