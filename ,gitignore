@@ -7,8 +7,8 @@
 *.sln.docstates
 
 # Build results
-[Bb]in/
-[Oo]bj/
+bin/
+obj/
 *.exe
 *.dll
 *.pdb
