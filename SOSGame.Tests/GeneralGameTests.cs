@@ -43,8 +43,8 @@ namespace SOSGame.Logic
             if (IsGameOver())
             {
                 string winner = (playerOneScore > playerTwoScore) ? "Player 1 (Red)" :
-                                (playerTwoScore > playerOneScore) ? "Player 2 (Blue)" : "Tie";
-                string gameOverMessage = $"Game Over! {winner} wins!";
+                                (playerTwoScore > playerOneScore) ? "Player 2 (Blue)" : "Oh no! There was a tie and no one";
+                string gameOverMessage = $" {winner} wins! Game Over!";
                 string finalMessage = moveMessage.Length > 0 ? $"{moveMessage} {gameOverMessage}" : gameOverMessage;
                 displayBanner?.Invoke(finalMessage);
             }
