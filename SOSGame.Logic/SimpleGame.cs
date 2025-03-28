@@ -27,7 +27,7 @@ namespace SOSGame.Logic
 
             // Stop after the first SOS.
             int newSOS = CountNewSOS(row, col, stopAfterFirst: true);
-            string moveMessage =  "";
+            string moveMessage = "";
 
             if (newSOS > 0)
             {
@@ -38,12 +38,12 @@ namespace SOSGame.Logic
                     playerTwoScore += newSOS;
 
 
-                    string winner = (playerOneScore > playerTwoScore) ? "Nice job player Red" :
-                                    (playerTwoScore > playerOneScore) ? "Sweet Action player Blue" : "Tie";
-                    string gameOverMessage = $" {winner} wins! Game Over!";
-                    string finalMessage = moveMessage.Length > 0 ? $"{moveMessage} {gameOverMessage}" : gameOverMessage;
-                    displayBanner?.Invoke(finalMessage);
-         
+                string winner = (playerOneScore > playerTwoScore) ? "Nice job player Red" :
+                                (playerTwoScore > playerOneScore) ? "Sweet Action player Blue" : "Tie";
+                string gameOverMessage = $" {winner} wins! Game Over!";
+                string finalMessage = moveMessage.Length > 0 ? $"{moveMessage} {gameOverMessage}" : gameOverMessage;
+                displayBanner?.Invoke(finalMessage);
+
 
                 // Freeze the game so no further moves are accepted.
                 this.IsFrozen = true;
@@ -51,7 +51,7 @@ namespace SOSGame.Logic
 
             if (IsGameOver())
             {
-                string endMessage = "Game Over!";
+                string endMessage = "This round ended as a draw! Want to try again?";
                 System.Diagnostics.Debug.WriteLine(endMessage);
                 displayBanner?.Invoke(endMessage);
             }

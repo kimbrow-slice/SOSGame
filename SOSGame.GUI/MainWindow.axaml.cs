@@ -35,13 +35,20 @@ namespace SOSGame.GUI
             AvaloniaXamlLoader.Load(this);
             InitializeComponent();
 
+            // Initialize VictoryBanner control.
             victoryBanner = this.FindControl<TextBlock>("VictoryBanner");
 
             gridControl = this.FindControl<GridSystem>("GameGrid");
             if (gridControl != null)
             {
-                // Set the parent reference for grid events and callbacks.
+                // Set the parent reference for grid events.
                 gridControl.SetParent(this);
+                // Wire up callbacks so that UI updates are handled here.
+                gridControl.OnScoreUpdated = (p1, p2) => UpdateScoreboard(p1, p2);
+                gridControl.OnTurnChanged = (isP1) => UpdatePlayerTurnDisplay(isP1);
+                gridControl.OnLetterCleared = () => ClearLetterSelection();
+                // Instead of using a decoupled banner callback, we pass our own ShowVictoryBanner method.
+                gridControl.OnBannerDisplayed = (msg) => ShowVictoryBanner(msg);
             }
 
             startGameButton = this.FindControl<Button>("StartGameButton");
@@ -156,14 +163,14 @@ namespace SOSGame.GUI
                 gridSize = 3;
             }
 
-            // Reset the grid and instantiate a new game.
+            // Reset the grid and create a new game instance.
             gridControl.SetGridSize(gridSize);
 
-            // Reset the scoreboard display.
+            // Reset the scoreboard to initial state.
             UpdateScoreboard(0, 0);
         }
 
-        // Retrieves the letter selected by the user from the checkboxes and validates only one is selected
+        // Retrieves the letter selected by the user from the checkboxes and validates that only one is selected.
         public char? GetSelectedLetter()
         {
             if (selectSCheckBox == null || selectOCheckBox == null)
@@ -177,7 +184,7 @@ namespace SOSGame.GUI
 
             System.Diagnostics.Debug.WriteLine($"Letter Selection -> S: {selectedS}, O: {selectedO}");
 
-            // Ensure that both or neither are not selected.
+            // Ensure that both or neither are selected.
             if (selectedS && selectedO)
             {
                 ShowErrorDialog("ERROR: Both 'S' and 'O' are selected. Please select only one.");
@@ -202,7 +209,7 @@ namespace SOSGame.GUI
             System.Diagnostics.Debug.WriteLine("Letter selection cleared.");
         }
 
-        // Displays the victory banner with the provided message then hides the turn display during victory state.
+        // Displays the victory banner with the provided message, then hides the turn display during victory state.
         public void ShowVictoryBanner(string message)
         {
             var bannerContainer = this.FindControl<Border>("VictoryBannerContainer");
@@ -214,6 +221,10 @@ namespace SOSGame.GUI
                 bannerText.Text = message;
                 bannerContainer.IsVisible = true;
                 turnDisplay.IsVisible = false;
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Banner controls not found.");
             }
         }
 
@@ -245,7 +256,7 @@ namespace SOSGame.GUI
             }
         }
 
-        // Updates the display for the current player's turn
+        // Updates the display for the current player's turn.
         public void UpdatePlayerTurnDisplay(bool isPlayerOne)
         {
             var turnDisplay = this.FindControl<TextBlock>("playerTurnDisplay");
@@ -267,7 +278,7 @@ namespace SOSGame.GUI
             return gameModeSelected && playerModeSelected && gridSizeValid;
         }
 
-        // Error message dialog to pause execution until the user acknowledges.
+        // Provides a popup dialog with the error message.
         public async void ShowErrorDialog(string message)
         {
             var dialog = new Window
@@ -300,7 +311,6 @@ namespace SOSGame.GUI
                 Width = 80,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
             };
-            // Close the dialog when OK is clicked.
             okButton.Click += (_, __) => dialog.Close();
 
             stackPanel.Children.Add(messageText);
@@ -310,8 +320,7 @@ namespace SOSGame.GUI
             await dialog.ShowDialog(this);
         }
 
-        // Opens a file save dialog to allow the user to save the game score as a CSV file.
-        // Writes a CSV header to the chosen file.
+        // Displays a save file dialog to allow the user to save the game score as a CSV file.
         private async Task ShowSaveFileDialog()
         {
             if (StorageProvider != null)

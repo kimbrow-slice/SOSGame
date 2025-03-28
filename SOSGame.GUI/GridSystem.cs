@@ -14,11 +14,17 @@ namespace SOSGame.GUI
         private MainWindow? parentWindow; // Reference to the main window for accessing UI elements.
         private BaseGame? game; // Holds the game logic instance (can be either SimpleGame or GeneralGame).
 
-        // Setting IsHitTestVisible to false lets click events pass to underlying grid buttons.
+        // Overlay canvas for drawing SOS lines.
         private Canvas overlayCanvas = new Canvas
         {
-            IsHitTestVisible = false
+            IsHitTestVisible = false // ensures clicks go through to the buttons
         };
+
+        // Public callback properties for decoupling
+        public Action<int, int>? OnScoreUpdated;
+        public Action<bool>? OnTurnChanged;
+        public Action? OnLetterCleared;
+        public Action<string>? OnBannerDisplayed;
 
         // Initializes the grid UI when a GridSystem instance is created.
         public GridSystem()
@@ -46,11 +52,12 @@ namespace SOSGame.GUI
                 // Choose the game mode based on the parent window's selection.
                 if (parentWindow.IsGeneralGameModeSelected)
                 {
-                    game = new GeneralGame(gridSize, parentWindow.ShowVictoryBanner);
+                    // Use the callback for banner display.
+                    game = new GeneralGame(gridSize, msg => OnBannerDisplayed?.Invoke(msg));
                 }
                 else
                 {
-                    game = new SimpleGame(gridSize, parentWindow.ShowVictoryBanner);
+                    game = new SimpleGame(gridSize, msg => OnBannerDisplayed?.Invoke(msg));
                 }
             }
             else
@@ -147,11 +154,11 @@ namespace SOSGame.GUI
             button.Content = selectedLetter.Value;
             button.Foreground = Brushes.Black;
 
-            // Refresh scoreboard and current player's turn display.
-            parentWindow.UpdateScoreboard(game.GetPlayerOneScore(), game.GetPlayerTwoScore());
+            // Replace direct calls to parentWindow with callbacks.
+            OnScoreUpdated?.Invoke(game.GetPlayerOneScore(), game.GetPlayerTwoScore());
             isPlayerOneTurn = game.IsPlayerOneTurn();
-            parentWindow.UpdatePlayerTurnDisplay(isPlayerOneTurn);
-            parentWindow.ClearLetterSelection();
+            OnTurnChanged?.Invoke(isPlayerOneTurn);
+            OnLetterCleared?.Invoke();
 
             // Update overlay canvas to display any new SOS lines.
             UpdateOverlayCanvas(game);
@@ -179,7 +186,6 @@ namespace SOSGame.GUI
                     StartPoint = new Point(startX, startY),
                     EndPoint = new Point(endX, endY),
                     StrokeThickness = 4,
-                    // Choose the line color based on the player's color (Red or Blue)
                     Stroke = line.PlayerColor.Equals("Red", StringComparison.OrdinalIgnoreCase)
                                 ? Brushes.Red : Brushes.Blue
                 };
