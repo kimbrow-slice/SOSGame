@@ -13,14 +13,14 @@ namespace SOSGame.Tests
             int invalidGridSize = 2; // less than the minimum allowed size (3)
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new GameController(invalidGridSize));
+            Assert.Throws<ArgumentException>(() => new GameController(invalidGridSize, "Simple"));
         }
 
         [Fact]
         public void TestTurnSwitching()
         {
             // Arrange
-            GameController gameController = new GameController(5);
+            GameController gameController = new GameController(5, "Simple");
             char initialPlayer = gameController.CurrentPlayer;
 
             // Act

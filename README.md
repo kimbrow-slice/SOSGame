@@ -14,13 +14,13 @@ This project is graded based on the development of the SOS game. Two Players aim
 - GUI Library to build the graphical interface of the game (AvaloniaUI)
 
 ## Game Setup
-**Running the Released Version**:
+**Running from source code - Development Mode:**
 1. Clone the repository to your local machine e.g., git clone https://github.com/kimbrow-slice/SOSGame.git
-2. Open a command line interface and navigate to the directory where the project was downloaded, e.g., `cd C:\Users\USRENAMEHERE\Downloads\SOSGAME`
-3. Once in the directory, type `dotnet publish -c Release -r win-x64 --self-contained true` 
-**NOTE: This command is specific to Windows-64 bit, if running linux change to `linux64` or `osx-64` and run the game with `./SOSGame` while in the projects directory.**
-4. Navigate to the build output folder `cd cd bin\Release\net9.0\win-x64\publish`
-5. Run the executable file `SOSGame.exe`
+2. Open the game file in Visual Studio Code or your choosen IDE.
+3. Ensure the project dependencies are installed by running `dotnet restore`
+4. To run the game in debug mode, in Visual Studio press `F5` or Click `Start`
+5. Follow the instructions on your screen to start your game!
+
 
 ## References: 
  - [AvaloniaUI Documentation](https://docs.avaloniaui.net/docs/)
@@ -28,9 +28,9 @@ This project is graded based on the development of the SOS game. Two Players aim
  - [C# Style Guide](https://google.github.io/styleguide/csharp-style.html)
 
 
-### To Do for Sprint 3:
-1. **New Feature[LOGIC]:** Complete Win Condition checks for both SIMPLE and GENERAL game modes
-2. **New Feature[GUI]:** Create a dynamic scoreboard into the GUI
-3. **New Feature[GUI]:GUI** Update for SOS sequence completion
-4. **New Feature[Code Readability]:** Create a dedicated Styles.axaml file for all GUI styling
-5. **New Feature[Code Readability]:** Add a .gitignore for all build files
+### Sprint 3 Features:
+1. **Completed Feature[LOGIC]:** Complete Win Condition checks for both SIMPLE and GENERAL game modes
+2. **Completed Feature[GUI]:** Create a dynamic scoreboard into the GUI
+3. **Completed Feature[GUI]:GUI** Update for SOS sequence completion
+4. **Completed Feature[Code Readability]:** Create a dedicated Styles.axaml file for all GUI styling
+5. **Completed Feature[Code Readability]:** Add a .gitignore for all build files
