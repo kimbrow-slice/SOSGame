@@ -1,193 +1,216 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:SOSGame.GUI"
-        x:Class="SOSGame.GUI.MainWindow"
-        Title="SOS Game"
-        Width="1500" Height="800"
-        Background="Black">
-	<!-- Main layout grid with three rows: Header, Content, Footer -->
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<!-- Header -->
-			<RowDefinition Height="*"/>
-			<!-- Game Board -->
-			<RowDefinition Height="Auto"/>
-			<!-- Footer -->
-		</Grid.RowDefinitions>
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:SOSGame.GUI"
+    x:Class="SOSGame.GUI.MainWindow"
+    Title="SOS Game"
+    Width="1500" Height="800"
+    Background="{DynamicResource BackgroundBrush}">
 
-		<!-- HEADER -->
-		<Grid Grid.Row="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<!-- Left: Start/New Game Buttons -->
-				<ColumnDefinition Width="*"/>
-				<!-- Center: Welcome Message, Scoreboard, Victory Banner/Turn Display -->
-				<ColumnDefinition Width="Auto"/>
-				<!-- Right: Save Game Score CheckBox -->
-			</Grid.ColumnDefinitions>
+  <Window.Styles>
+    <StyleInclude Source="avares://SOSGame.GUI/Styles.axaml"/>
+  </Window.Styles>
 
-			<!-- Left Column: Start/New Game Buttons + Letter Selection -->
-			<Grid Grid.Column="0">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<!-- Row 0: Buttons -->
-					<RowDefinition Height="Auto"/>
-					<!-- Row 1: Letter Selection -->
-				</Grid.RowDefinitions>
 
-				<!-- Start/New Game Buttons -->
-				<StackPanel Orientation="Horizontal" Grid.Row="0" Margin="150,50,50,50">
-					<Button Name="StartGameButton"
-                            Content="Start Game"
-                            Background="Green"
-                            Foreground="White"
-                            Width="200"
-                            Height="40"
-                            FontSize="18"
-                            Padding="50,10,10,10"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"/>
-					<Button Name="NewGameButton"
-                            Content="New Game"
-                            Background="Orange"
-                            Foreground="White"
-                            Width="200"
-                            Height="40"
-                            FontSize="18"
-                            Padding="50,10,10,10"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="10,0,0,0"/>
-				</StackPanel>
+  <!-- Main layout grid with three rows: Header, Content, Footer -->
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>  <!-- Header -->
+      <RowDefinition Height="*"/>     <!-- Game Board -->
+      <RowDefinition Height="Auto"/>  <!-- Footer -->
+    </Grid.RowDefinitions>
 
-				<!-- Letter Selection (S/O Checkboxes) below the buttons -->
-				<StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
-					<CheckBox Name="SelectSCheckBox"
-                              Content="Select S"
-                              Padding="10,15,10,15"
-                              IsChecked="False"/>
-					<CheckBox Name="SelectOCheckBox"
-                              Content="Select O"
-                              Padding="10,15,10,15"
-                              IsChecked="False"/>
-				</StackPanel>
-			</Grid>
-			
+    <!-- HEADER -->
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>  <!-- Left: Start/New & player config -->
+        <ColumnDefinition Width="*"/>     <!-- Center: Title, scoreboard, banners -->
+        <ColumnDefinition Width="Auto"/>  <!-- Right: Save checkbox -->
+      </Grid.ColumnDefinitions>
 
-			<!-- Center: Welcome Message, Scoreboard, Victory Banner and Turn Display -->
-			<StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top">
-				<TextBlock Name="TitleText"
-						   Classes="title"
-						   Text="Welcome to Jeff Kimbrow's SOS Game"/>
-				<TextBlock Name="ScoreBoard"
-						   Classes="scoreboard"
-						   Text="Red Player: [ 0 | 0 ] : Blue Player"/>
-				
-				<StackPanel Orientation="Vertical" Margin="0,100,0,0">
-					<Border Name="VictoryBannerContainer"
-							IsVisible="False"
-							Background="Black"
-							HorizontalAlignment="Center"
-							Margin="0,10,0,10">
-						<TextBlock Name="VictoryBannerText"
-								   Text=""
-								   Foreground="Gold"
-								   FontSize="24"
-								   HorizontalAlignment="Center"/>
-					</Border>
-					<TextBlock Name="playerTurnDisplay"
-							   Text="Player 1's Turn (Red)"
-							   Foreground="Red"
-							   FontSize="18"
-							   HorizontalAlignment="Center"
-							   Margin="0,0,0,10"/>
-				</StackPanel>
-			</StackPanel>
+      <!-- Left Column: Buttons + Player Config + Letter selection -->
+      <Grid Grid.Column="0">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>  <!-- Buttons -->
+          <RowDefinition Height="Auto"/>  <!-- Player config, letter selection -->
+        </Grid.RowDefinitions>
 
-			<!-- Right: Save Game Score CheckBox -->
-			<StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,50,0,0">
-				<CheckBox Name="SaveScoreCheckBox"
-						  Content="Save Game Score"
-						  Padding="10,15,10,15"
-						  IsChecked="False"
-						  Margin="0,5,0,5"/>
-			</StackPanel>
-		</Grid>
 
-		<!-- CONTENT: Game Board -->
-		<Border Grid.Row="1" Name="GameBoard" Classes="gameBoard" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<local:GridSystem Name="GameGrid"/>
-		</Border>
+        <!-- Player Mode, Per side Options, Letter selection -->
+        <StackPanel Grid.Row="1"
+                    Margin="20">
+          <TextBlock Text="Select Players: "
+                     FontWeight="Bold"
+                     Foreground="{DynamicResource PrimaryTextBrush}"/>
+          <RadioButton x:Name="playerVsPlayerRadio"
+                       Content="Player vs Player"
+                       GroupName="playerMode"/>
+          <RadioButton x:Name="playerVsAIRadio"
+                       Content="Player vs AI"
+                       GroupName="playerMode"/>
+          <RadioButton x:Name="cpuVsCpuRadio"
+                       Content="Computer vs Computer"
+                       GroupName="playerMode"/>
 
-		<!-- FOOTER -->
-		<Grid Grid.Row="2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<!-- Left: Grid Size Input -->
-				<ColumnDefinition Width="*"/>
-				<!-- Center: Game Mode Selection -->
-				<ColumnDefinition Width="Auto"/>
-				<!-- Right: Player Selection -->
-			</Grid.ColumnDefinitions>
+          <!-- Red Player CPU/Human -->
+          <StackPanel x:Name="redCpuOptionsPanel"
+                      Orientation="Horizontal"
+                      IsVisible="False">
+            <TextBlock Text="Red Player:"
+                       Foreground="{DynamicResource PrimaryTextBrush}"
+                       VerticalAlignment="Center"/>
+            <RadioButton x:Name="redHumanRadio"
+                         Content="Human"
+                         GroupName="redSide"
+                         Margin="10,0,5,0"/>
+            <RadioButton x:Name="redCpuRadio"
+                         Content="Computer"
+                         GroupName="redSide"/>
+          </StackPanel>
 
-			<!-- Bottom Left: Grid Size Input -->
-			<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20">
-				<TextBox Name="GridSizeInput"
-						 Classes="gridSize"
-						 Text="3"/>
-				<TextBlock Text="Input a number greater than or equal to 3."
-						   Foreground="White"
-						   VerticalAlignment="Center"
-						   Margin="10,0,0,0"/>
-			</StackPanel>
+          <!-- Blue Player CPU/Human -->
+          <StackPanel x:Name="blueCpuOptionsPanel"
+                      Orientation="Horizontal"
+                      IsVisible="False"
+                      Margin="0,5,0,0">
+            <TextBlock Text="Blue Player:"
+                       Foreground="{DynamicResource PrimaryTextBrush}"
+                       VerticalAlignment="Center"/>
+            <RadioButton x:Name="blueHumanRadio"
+                         Content="Human"
+                         GroupName="blueSide"
+                         Margin="10,0,5,0"/>
+            <RadioButton x:Name="blueCpuRadio"
+                         Content="Computer"
+                         GroupName="blueSide"/>
+          </StackPanel>
 
-			<!-- Bottom Center: Game Mode Selection Panel -->
-			<Border Grid.Column="1" Classes="controlPanel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,20,0,20">
-				
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="Select Game Mode:" 
-							   Foreground="White" 
-							   VerticalAlignment="Center" 
-							   Margin="10"/>
-					
-					<RadioButton Name="SimpleGameRadio" 
-								 Content="Simple Game" 
-								 GroupName="GameType" 
-								 IsChecked="False"/>
-					<RadioButton Name="GeneralGameRadio" 
-								 Content="General Game" 
-								 GroupName="GameType" 
-								 IsChecked="False"/>
-				</StackPanel>
-			</Border>
+          <!-- Letter selection for human players -->
+		  <TextBlock Text="Select Your Letter:  "
+                     FontWeight="Bold"
+                     Foreground="{DynamicResource PrimaryTextBrush}"/>
+          <CheckBox x:Name="SelectSCheckBox"
+                    Content="Select S"/>
+          <CheckBox x:Name="SelectOCheckBox"
+                    Content="Select O"/>
+        </StackPanel>
+      </Grid>
 
-			<!-- Bottom Right: Player Selection Panel -->
-			<Border Grid.Column="2" 
-					Classes="controlPanel" 
-				HorizontalAlignment="Right" 
-					VerticalAlignment="Bottom" 
-					Margin="20">
-				
-				<StackPanel 
-					Orientation="Vertical" 
-					HorizontalAlignment="Center">
-					<RadioButton 
-								Name="PlayerVsPlayerRadio" 
-								Content="Player vs Player" 
-								GroupName="GameMode" 
-								IsChecked="False"/>
-					
-					<RadioButton Name="PlayerVsAIRadio" 
-								 Content="Player vs AI" 
-								 GroupName="GameMode" 
-								 IsChecked="False"/>
-					<RadioButton Name="VulnerableProgramState" 
-								 Content="Vulnerable Program State" 
-								 GroupName="GameMode" 
-								 IsChecked="False"/>
-				</StackPanel>
-			</Border>
-		</Grid>
-	</Grid>
+      <!-- Center: Title, Scoreboard, Banner/Turn -->
+      <StackPanel Grid.Column="1"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Top"
+                  Spacing="10">
+        <TextBlock x:Name="TitleText"
+                   Classes="title"
+                   Text="Welcome to Jeff Kimbrow's SOS Game"/>
+        <TextBlock x:Name="ScoreBoard"
+                   Classes="scoreboard"
+                   Text="Red Player: [ 0 | 0 ] : Blue Player"/>
+
+        <Border x:Name="VictoryBannerContainer"
+                IsVisible="False"
+                Classes="VictoryBannerContainer">
+          <TextBlock x:Name="VictoryBannerText"
+                     Classes="scoreboard"
+                     Foreground="{DynamicResource AccentBrush}"
+                     FontSize="24"
+                     HorizontalAlignment="Center"/>
+        </Border>
+
+        <TextBlock x:Name="playerTurnDisplay"
+                   Text="Player 1's Turn (Red)"
+                   Foreground="Red"
+                   FontSize="18"
+                   HorizontalAlignment="Center"/>
+      </StackPanel>
+
+      <!-- Save Game Score -->
+      <StackPanel Grid.Column="2"
+                  Orientation="Horizontal"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="10">
+        <CheckBox x:Name="SaveScoreCheckBox"
+                  Content="Save Game Score"
+                  Padding="10"/>
+      </StackPanel>
+    </Grid>
+
+    <!-- GAME BOARD -->
+    <Border Grid.Row="1"
+            Name="GameBoard"
+            Classes="gameBoard"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+      <local:GridSystem x:Name="GameGrid"/>
+    </Border>
+
+     <!-- FOOTER: Grid Size, Game Mode selector, Game Buttons -->
+  <Grid Grid.Row="2">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>  <!-- Column 0: Grid size -->
+      <ColumnDefinition Width="*"/>     <!-- Column 1: Game type radios -->
+      <ColumnDefinition Width="Auto"/>  <!-- Column 2: Game buttons -->
+    </Grid.ColumnDefinitions>
+
+    <!-- Grid size -->
+    <StackPanel Grid.Column="0"
+                Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="20"
+                Spacing="5">
+      <TextBox Name="GridSizeInput" Width="40" Text="3"/>
+      <TextBlock Text="Input size ≥ 3"
+                 Foreground="White"
+                 VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <!-- Game mode radios -->
+    <StackPanel Grid.Column="1"
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="10">
+      <TextBlock Text="Select Game Mode:"
+                 Foreground="White"
+                 VerticalAlignment="Center"/>
+      <RadioButton Name="SimpleGameRadio"
+                   Content="Simple Game"
+                   GroupName="GameType"/>
+      <RadioButton Name="GeneralGameRadio"
+                   Content="General Game"
+                   GroupName="GameType"/>
+	<RadioButton Name="VulnerableGameRadio"
+                   Content="Vulnerable Game State"
+                   GroupName="GameType"/>
+    </StackPanel>
+
+    <!-- Start/New Game Buttons -->
+    <StackPanel Grid.Column="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="20"
+                Spacing="10">
+      <Button Name="StartGameButton"
+              Content="Start Game"
+              Background="Green"
+              Foreground="White"
+              Width="200"
+              Height="40"
+              FontSize="18"
+              IsEnabled="False"/>
+      <Button Name="NewGameButton"
+              Content="New Game"
+              Background="Orange"
+              Foreground="White"
+              Width="200"
+              Height="40"
+              FontSize="18"
+              IsEnabled="False"/>
+    </StackPanel>
+  </Grid>
+
+  </Grid>
 </Window>

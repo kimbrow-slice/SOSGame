@@ -46,7 +46,7 @@ namespace SOSGame.Logic
                    (letter == 'S' || letter == 'O');
         }
 
-        protected void PlaceLetter(int row, int col, char letter)
+        public void PlaceLetter(int row, int col, char letter)
         {
             board[row, col] = letter;
             totalMovesMade++;
@@ -87,6 +87,16 @@ namespace SOSGame.Logic
             return totalSOS;
         }
 
+        public int PreviewSOS(int row, int col, char letter)
+        {
+            if (board[row, col] != '\0') return 0;
+            board[row, col] = letter;
+            int result = CountNewSOS(row, col, stopAfterFirst: true);
+            board[row, col] = '\0';
+            return result;
+        }
+
+
         // Checks if the three board cells form "S-O-S". If they do, adds a line to the Lines list.
         // Returns 1 if an SOS is found; otherwise, returns 0.
         protected int CheckTriplet(int r1, int c1, int r2, int c2, int r3, int c3)
@@ -126,6 +136,34 @@ namespace SOSGame.Logic
 
         // Expose SOS lines for UI updates.
         public List<SOSLine> GetSOSLines() => Lines;
+
+        // This class is used to manage the game state and logic for the SOS game.
+        public IList<(int Row, int Col)> GetEmptyCells()
+        {
+            var empties = new List<(int, int)>();
+            for (int r = 0; r < gridSize; r++)
+            {
+                for (int c = 0; c < gridSize; c++)
+                {
+                    if (board[r, c] == '\0')
+                        empties.Add((r, c));
+                }
+            }
+            return empties;
+        }
+
+
+        public bool WouldScore(char letter, int r, int c)
+        {
+            if (!IsInBounds(r, c) || board[r, c] != '\0' || (letter != 'S' && letter != 'O'))
+                return false;
+
+            // Temporarily place the letter and count SOS
+            board[r, c] = letter;
+            int found = CountNewSOS(r, c);
+            board[r, c] = '\0';         // revert
+            return found > 0;
+        }
     }
 
     // Visually display a line drawn through an SOS formation.
