@@ -72,9 +72,6 @@ namespace SOSGame.GUI
             }
         }
 
-        /// <summary>
-        /// New helper to redraw SOS lines overlay on demand.
-        /// </summary>
         public void RefreshOverlay()
         {
             if (game != null)
