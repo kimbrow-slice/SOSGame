@@ -5,58 +5,40 @@ namespace SOSGame.Tests
 {
     public class SimpleGameTests
     {
-        [Fact]
-        public void MakeMove_FormsVerticalSOS_ReturnsTrue()
+        // Parameterized test for forming SOS in vertical, horizontal, and diagonal.
+        [Theory]
+        [InlineData(0, 2, 1, 2, 2, 2)]  // vertical
+        [InlineData(2, 0, 2, 1, 2, 2)]  // horizontal
+        [InlineData(0, 0, 1, 1, 2, 2)]  // diagonal
+        public void MakeMove_FormsSOS_ReturnsTrue(
+            int r1, int c1, int r2, int c2, int r3, int c3)
         {
             var game = new SimpleGame(5);
-            game.MakeMove(0, 2, 'S');
-            game.MakeMove(1, 2, 'O');
-            var result = game.MakeMove(2, 2, 'S'); // Should form SOS vertically
+            game.MakeMove(r1, c1, 'S');
+            game.MakeMove(r2, c2, 'O');
+            bool result = game.MakeMove(r3, c3, 'S');
             Assert.True(result);
         }
 
-        [Fact]
-        public void MakeMove_FormsHorizontalSOS_ReturnsTrue()
+        // Parameterized test for invalid inputs (invalid letter or out of bounds).
+        [Theory]
+        [InlineData(0, 0, 'X')]   // invalid letter
+        [InlineData(-1, 0, 'S')]  // out of bounds (row < 0)
+        [InlineData(0, 5, 'O')]   // out of bounds (col >= size)
+        public void MakeMove_InvalidInput_ReturnsFalse(int row, int col, char letter)
         {
             var game = new SimpleGame(5);
-            game.MakeMove(2, 0, 'S');
-            game.MakeMove(2, 1, 'O');
-            var result = game.MakeMove(2, 2, 'S'); // Should form SOS horizontally
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void MakeMove_FormsDiagonalSOS_ReturnsTrue()
-        {
-            var game = new SimpleGame(5);
-            game.MakeMove(0, 0, 'S');
-            game.MakeMove(1, 1, 'O');
-            var result = game.MakeMove(2, 2, 'S'); // Should form SOS diagonally
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void MakeMove_InvalidLetter_ReturnsFalse()
-        {
-            var game = new SimpleGame(5);
-            var result = game.MakeMove(0, 0, 'X'); // Invalid letter
+            bool result = game.MakeMove(row, col, letter);
             Assert.False(result);
         }
 
+        // Test for attempting a move on an already occupied cell.
         [Fact]
-        public void MakeMove_OutsideBounds_ReturnsFalse()
-        {
-            var game = new SimpleGame(5);
-            var result = game.MakeMove(-1, 0, 'S'); // Out of bounds
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void MakeMove_AlreadyOccupied_ReturnsFalse()
+        public void MakeMove_ToOccupiedCell_ReturnsFalse()
         {
             var game = new SimpleGame(5);
             game.MakeMove(0, 0, 'S');
-            var result = game.MakeMove(0, 0, 'O'); // Already occupied
+            bool result = game.MakeMove(0, 0, 'O');
             Assert.False(result);
         }
     }

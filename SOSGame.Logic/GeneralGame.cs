@@ -18,35 +18,30 @@ namespace SOSGame.Logic
             if (!IsValidMove(row, col, letter))
                 return false;
 
-            PlaceLetter(row, col, letter); // Tracks totalMoves and sets board
+            PlaceLetter(row, col, letter);
 
             int newSOS = CountNewSOS(row, col);
-            string moveMessage = "";
-
             if (newSOS > 0)
             {
                 if (isPlayerOneTurn)
                     playerOneScore += newSOS;
                 else
                     playerTwoScore += newSOS;
-
-                moveMessage = $"Player {(isPlayerOneTurn ? 1 : 2)} formed {newSOS} SOS!";
-                // Current player keeps turn if they formed an SOS
+                // current player keeps turn on SOS
             }
             else
             {
-                // Switch turn if no SOS
                 SwitchTurn();
             }
 
-            // Only declare game over when the board is full
             if (IsGameOver())
             {
-                string winner = (playerOneScore > playerTwoScore) ? "Nice job player Red" :
-                                (playerTwoScore > playerOneScore) ? "Sweet Action player Blue" : "Oh no! There was a tie and no one";
-                string gameOverMessage = $" {winner} wins! Game Over!";
-                string finalMessage = moveMessage.Length > 0 ? $"{moveMessage} {gameOverMessage}" : gameOverMessage;
-                displayBanner?.Invoke(finalMessage);
+                string winner = (playerOneScore > playerTwoScore)
+                    ? "Nice Job Player Red"
+                    : (playerTwoScore > playerOneScore)
+                        ? "Sweet Action Player Blue"
+                        : "Oh No! There was a tie and no one";
+                displayBanner?.Invoke($" {winner} wins! Game Over!");
             }
 
             return true;
@@ -56,7 +51,6 @@ namespace SOSGame.Logic
         {
             int totalSOS = 0;
 
-            // 4 directions to avoid double counting
             int[,] directions = new int[,]
             {
                 { 0, 1 },   // right
@@ -70,13 +64,13 @@ namespace SOSGame.Logic
                 int dr = directions[i, 0];
                 int dc = directions[i, 1];
 
-                // Pattern 1: new cell is the middle 'O'
+                // New cell is the middle 'O'
                 totalSOS += CheckTriplet(row - dr, col - dc, row, col, row + dr, col + dc);
 
-                // Pattern 2: new cell is the first 'S'
+                // New cell is the first 'S'
                 totalSOS += CheckTriplet(row, col, row + dr, col + dc, row + 2 * dr, col + 2 * dc);
 
-                // Pattern 3: new cell is the last 'S'
+                // New cell is the last 'S'
                 totalSOS += CheckTriplet(row - 2 * dr, col - 2 * dc, row - dr, col - dc, row, col);
             }
 

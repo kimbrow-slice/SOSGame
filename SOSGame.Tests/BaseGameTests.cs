@@ -75,5 +75,27 @@ namespace SOSGame.Tests
             Assert.Equal(0, game.GetPlayerOneScore());
             Assert.Equal(0, game.GetPlayerTwoScore());
         }
+
+        [Fact]
+        public void GetEmptyCells_ReturnsAllBlanks()
+        {
+            var game = new SimpleGame(3);
+            game.MakeMove(1, 1, 'S');
+            var empties = game.GetEmptyCells();
+            Assert.Equal(8, empties.Count);
+            Assert.DoesNotContain((1, 1), empties);
+        }
+
+        [Fact]
+        public void WouldScore_DetectsSOSCorrectly()
+        {
+            var game = new SimpleGame(3);
+            // Setup so placing 'S' at (0,2) completes SOS
+            game.PlaceLetter(0, 0, 'S');
+            game.PlaceLetter(0, 1, 'O');
+            Assert.True(game.WouldScore('S', 0, 2));
+            Assert.False(game.WouldScore('O', 2, 2));
+        }
+
     }
 }
