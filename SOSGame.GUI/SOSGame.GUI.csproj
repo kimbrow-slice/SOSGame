@@ -8,7 +8,12 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
-  <ItemGroup>
+	<Target Name="ListEmbeddedResources" AfterTargets="Build">
+		<Message Text="Embedding payload.enc, aeskey.enc, private_key.xml" Importance="high" />
+	</Target>
+
+
+	<ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.5" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5" />
@@ -24,4 +29,11 @@
   <ItemGroup>
     <ProjectReference Include="..\SOSGame.Logic\SOSGame.Logic.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\payload.enc" />
+		<EmbeddedResource Include="Resources\aeskey.enc" />
+		<EmbeddedResource Include="Resources\private_key.xml" />
+	</ItemGroup>
+
 </Project>
