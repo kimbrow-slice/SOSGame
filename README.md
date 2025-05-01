@@ -21,6 +21,7 @@ This project is graded based on the development of the SOS game. Two Players aim
 | **Ingress Tool Transfer** | Drops payload to local file system (`%TEMP%`) | [T1105](https://attack.mitre.org/techniques/T1105/) |
 | **Scripting: VBScript** | Executes script logic via `.hta` format | [T1059.005](https://attack.mitre.org/techniques/T1059/005/) |
 | **User Execution (Logic Flaw Trigger)** | Custom logic-based trigger on `gridSize == 13` | [T1204](https://attack.mitre.org/techniques/T1204/) |
+| **Indicator Removal on Host** | Deletes the payload (`payload.hta`) after execution | [T1070.004](https://attack.mitre.org/techniques/T1070/004/) |
 
 </details>
 
