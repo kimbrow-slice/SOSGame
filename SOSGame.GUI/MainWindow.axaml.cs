@@ -4,17 +4,21 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using SOSGame.Logic;
 using SOSGame.Controller;
 using Avalonia.Platform.Storage;
+using Avalonia.Interactivity;
+using System.Collections.Generic;
+using Avalonia.Threading;
+
 
 namespace SOSGame.GUI
 {
     public partial class MainWindow : Window
     {
-        // Expose controller to GridSystem
         private GameController? gameController;
         public GameController GameController => gameController!;
 
@@ -23,38 +27,93 @@ namespace SOSGame.GUI
             AvaloniaXamlLoader.Load(this);
             InitializeComponent();
 
-            //  Hook current grid callbacks
             GameGrid.SetParent(this);
             GameGrid.OnScoreUpdated = (p1, p2) => UpdateScoreboard(p1, p2);
             GameGrid.OnTurnChanged = isP1 => UpdatePlayerTurnDisplay(isP1);
             GameGrid.OnLetterCleared = () => ClearLetterSelection();
             GameGrid.OnBannerDisplayed = msg => ShowVictoryBanner(msg);
 
-            //  Button handlers 
             StartGameButton.Click += (_, __) => StartGame();
             NewGameButton.Click += (_, __) => NewGame();
 
-            //  Save file checkbox 
+            ReplayButton.Click += async (_, __) => await ReplayGame();
+
             SaveScoreCheckBox.IsCheckedChanged += async (_, __) =>
             {
                 if (SaveScoreCheckBox.IsChecked == true)
                     await ShowSaveFileDialog();
             };
 
-            // Initial scoreboard
             ScoreBoard.Text = "Red Player: [ 0 | 0 ] : Blue Player";
-
-            // Enable/disable logic for Start/New
             WireUpEnableLogic();
         }
 
-        // Detect whether General mode is selected
+        // Start the replay with the loaded moves
+        private async Task StartReplayGame(string filePath)
+        {
+            //  Load saved data
+            var result = await GameController.LoadGameFromCSV(filePath);
+            int gridSize = result.gridSize;
+            string gameMode = result.gameMode;
+            var movesList = result.moves;
+
+            // Create a fresh controller instance
+            gameController = new GameController(gridSize, gameMode,
+                redIsCpu: false, blueIsCpu: false, 'S', 'O', msg => ShowVictoryBanner(msg));
+
+            // Hook up your UI update logic to OnMoveMade
+            gameController.OnMoveMade += (r, c, l) =>
+            {
+                GameGrid.SetCellContent(r, c, l);
+                GameGrid.RefreshOverlay();
+                UpdateScoreboard(gameController.PlayerOneScore, gameController.PlayerTwoScore);
+                UpdatePlayerTurnDisplay(gameController.IsPlayerOneTurn());
+            };
+
+            // Reset the board size & logic so grid is ready
+            GameGrid.AllowUnsafeGridSize = false;
+            GameGrid.SetGridSize(gridSize);
+            GameGrid.SetGameLogic(gameController.GameLogic);
+
+            // Kick off the replay
+            await gameController.ReplayGameAsync(movesList);
+
+            // Final UI sync
+            Dispatcher.UIThread.Post(() =>
+            {
+                UpdateScoreboard(gameController.PlayerOneScore, gameController.PlayerTwoScore);
+                UpdatePlayerTurnDisplay(gameController.IsPlayerOneTurn());
+            });
+        }
+
+        // Replay Button Click Event
+        private async Task ReplayGame()
+        {
+            // Open the file dialog to select a CSV file
+            var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Open Saved Game CSV",
+                FileTypeFilter = new[] { new FilePickerFileType("CSV Files") { Patterns = new[] { "*.csv" } } },
+                AllowMultiple = false
+            });
+
+            if (result != null && result.Count > 0)
+            {
+                string filePath = result[0].Path.LocalPath;
+
+                // Start replay with the selected file path
+                await StartReplayGame(filePath);
+            }
+        }
+
         public bool IsGeneralGameModeSelected =>
             GeneralGameRadio.IsChecked == true;
 
+        public bool IsVulnerableGameSelected =>
+            VulnerableGameRadio.IsChecked == true;
+
         private void WireUpEnableLogic()
         {
-            // Panels always visible
             redCpuOptionsPanel.IsVisible = true;
             blueCpuOptionsPanel.IsVisible = true;
 
@@ -65,7 +124,6 @@ namespace SOSGame.GUI
                 NewGameButton.IsEnabled = valid;
             }
 
-            // Player vs Player
             playerVsPlayerRadio.IsCheckedChanged += (_, __) =>
             {
                 redHumanRadio.IsChecked = true;
@@ -75,10 +133,8 @@ namespace SOSGame.GUI
                 refresh();
             };
 
-            // Player vs AI  
             playerVsAIRadio.IsCheckedChanged += (_, __) =>
             {
-                // clear previous selections
                 redHumanRadio.IsChecked = false;
                 redCpuRadio.IsChecked = false;
                 blueHumanRadio.IsChecked = false;
@@ -86,7 +142,6 @@ namespace SOSGame.GUI
                 refresh();
             };
 
-            // CPU vs CPU
             cpuVsCpuRadio.IsCheckedChanged += (_, __) =>
             {
                 redCpuRadio.IsChecked = true;
@@ -100,42 +155,65 @@ namespace SOSGame.GUI
             redCpuRadio.IsCheckedChanged += (_, __) => refresh();
             blueHumanRadio.IsCheckedChanged += (_, __) => refresh();
             blueCpuRadio.IsCheckedChanged += (_, __) => refresh();
-        }
 
+            SimpleGameRadio.IsCheckedChanged += (_, __) => refresh();
+            GeneralGameRadio.IsCheckedChanged += (_, __) => refresh();
+            VulnerableGameRadio.IsCheckedChanged += (_, __) => refresh();
+        }
 
         private void StartGame()
         {
+            Debug.WriteLine("[DEBUG] StartGame() triggered.");
             ResetBanner();
             ClearLetterSelection();
 
-            if (!int.TryParse(GridSizeInput.Text, out int gridSize)
-                || gridSize < 3 || gridSize > 12)
+            int gridSize;
+
+            if (IsVulnerableGameSelected)
             {
-                ShowErrorDialog(
-                  "Invalid board size input. Please enter a number between 3 and 12.");
-                gridSize = 3;
+                if (!int.TryParse(GridSizeInput.Text, out gridSize))
+                {
+                    ShowErrorDialog("Invalid board size input.");
+                    return;
+                }
+            }
+            else
+            {
+                if (!int.TryParse(GridSizeInput.Text, out gridSize)
+                    || gridSize < 3 || gridSize > 12)
+                {
+                    ShowErrorDialog("Invalid board size input. Please enter a number between 3 and 12.");
+                    return;
+                }
             }
 
+            GameGrid.AllowUnsafeGridSize = IsVulnerableGameSelected;
             GameGrid.SetGridSize(gridSize);
 
             bool redIsCpu = redCpuRadio.IsChecked == true;
             bool blueIsCpu = blueCpuRadio.IsChecked == true;
 
-            // if CPU vs CPU mode selected
             if (cpuVsCpuRadio.IsChecked == true)
             {
                 redIsCpu = true;
                 blueIsCpu = true;
             }
 
+            string gameMode =
+            IsVulnerableGameSelected ? "VulnerableGameState" :
+            (IsGeneralGameModeSelected ? "General" : "Simple");
+
+
             gameController = new GameController(
                 gridSize,
-                IsGeneralGameModeSelected ? "General" : "Simple",
-                redIsCpu, blueIsCpu,
+                gameMode,
+                redIsCpu,
+                blueIsCpu,
                 'S',
                 IsGeneralGameModeSelected ? 'S' : 'O',
                 msg => ShowVictoryBanner(msg)
             );
+
 
             gameController.OnMoveMade += (r, c, l) =>
             {
@@ -149,7 +227,6 @@ namespace SOSGame.GUI
 
             GameGrid.SetGameLogic(gameController.GameLogic);
 
-            // If CPU goes first, take turn
             if (((redIsCpu && gameController.CurrentPlayer == 'R') ||
                  (blueIsCpu && gameController.CurrentPlayer == 'B'))
                 && !gameController.IsGameOver())
@@ -166,7 +243,6 @@ namespace SOSGame.GUI
 
         public char? GetSelectedLetter()
         {
-            // If current side is CPU, bypass human selection
             if (gameController != null)
             {
                 if (gameController.CurrentPlayer == 'R' && redCpuRadio.IsChecked == true)
@@ -204,10 +280,11 @@ namespace SOSGame.GUI
             playerTurnDisplay.IsVisible = true;
         }
 
-        public void UpdateScoreboard(int p1, int p2)
+        public void UpdateScoreboard(int redScore, int blueScore)
         {
-            ScoreBoard.Text = $"Red Player: [ {p1} | {p2} ] : Blue Player";
+            ScoreBoard.Text = $"Red Player: [ {redScore} | {blueScore} ] : Blue Player";
         }
+
 
         public void UpdatePlayerTurnDisplay(bool isP1)
         {
@@ -220,7 +297,9 @@ namespace SOSGame.GUI
 
         private bool IsSelectionValid()
         {
-            bool modeOK = SimpleGameRadio.IsChecked == true || GeneralGameRadio.IsChecked == true;
+            bool modeOK = SimpleGameRadio.IsChecked == true
+                       || GeneralGameRadio.IsChecked == true
+                       || VulnerableGameRadio.IsChecked == true;
 
             bool sideOK =
                  (playerVsPlayerRadio.IsChecked == true
@@ -237,8 +316,6 @@ namespace SOSGame.GUI
 
             return modeOK && sideOK && sizeOK;
         }
-
-
 
         public async void ShowErrorDialog(string message)
         {
@@ -262,26 +339,88 @@ namespace SOSGame.GUI
 
         private async Task ShowSaveFileDialog()
         {
-            if (StorageProvider != null)
+            if (StorageProvider != null && gameController != null)
             {
+                // Open the file save picker to let the user choose the file path
                 var file = await StorageProvider
                     .SaveFilePickerAsync(new FilePickerSaveOptions
                     {
                         Title = "Save Game Score",
                         SuggestedFileName = "sos_game_score.csv",
                         FileTypeChoices = new[]
-                    {
-                        new FilePickerFileType("CSV")
                         {
-                            Patterns  = new[] { "*.csv" },
-                            MimeTypes = new[] { "text/csv" }
+                    new FilePickerFileType("CSV")
+                    {
+                        Patterns = new[] { "*.csv" },
+                        MimeTypes = new[] { "text/csv" }
+                    }
+                        }
+                    });
+
+                // If the user selected a file location, attempt to save the game state
+                if (file != null)
+                {
+                    bool fileSavedSuccessfully = false;
+                    int retries = 5;
+
+                    while (!fileSavedSuccessfully && retries > 0)
+                    {
+                        try
+                        {
+                            await gameController.SaveGameAsync(file.Path.LocalPath);
+
+                            Dispatcher.UIThread.Post(() =>
+                            {
+                                UpdateScoreboard(gameController.PlayerOneScore, gameController.PlayerTwoScore);
+                                UpdatePlayerTurnDisplay(gameController.IsPlayerOneTurn());
+                            });
+
+                            fileSavedSuccessfully = true;  
+                        }
+                        catch (IOException ex)
+                        {
+                            retries--;
+
+                            if (retries == 0)
+                            {
+                                await ShowErrorMessageAsync($"Failed to save the file: {ex.Message}. Please try again later.");
+                            }
+                            else
+                            {
+                                await Task.Delay(500);  // Wait for half a second before retrying
+                            }
                         }
                     }
-                    });
-                if (file != null)
-                    await File.WriteAllTextAsync(file.Path.LocalPath,
-                                                "Player,Score,Color\n");
+                }
             }
         }
+
+
+
+        // Helper method to show error message
+        private async Task ShowErrorMessageAsync(string message)
+        {
+            // Display the error message in a simple dialog
+            var errorDialog = new Window
+            {
+                Title = "Error",
+                Width = 400,
+                Height = 200,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            var textBlock = new TextBlock { Text = message, Margin = new Thickness(10) };
+            var button = new Button
+            {
+                Content = "OK",
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center
+            };
+
+            button.Click += (_, __) => errorDialog.Close();
+            errorDialog.Content = new StackPanel { Children = { textBlock, button }, Spacing = 10 };
+            await errorDialog.ShowDialog(this);  // Show the dialog to the user
+        }
+
+
     }
 }

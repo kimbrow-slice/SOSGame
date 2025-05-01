@@ -181,12 +181,13 @@
       <RadioButton Name="GeneralGameRadio"
                    Content="General Game"
                    GroupName="GameType"/>
-	<RadioButton Name="VulnerableGameRadio"
-                   Content="Vulnerable Game State"
-                   GroupName="GameType"/>
-    </StackPanel>
+	  <RadioButton Name="VulnerableGameRadio" 
+				   Content="Vulnerable Game State" 
+				   GroupName="GameType"/>
 
-    <!-- Start/New Game Buttons -->
+	</StackPanel>
+
+    <!-- Start/New/Replay Game Buttons -->
     <StackPanel Grid.Column="2"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
@@ -209,7 +210,12 @@
               Height="40"
               FontSize="18"
               IsEnabled="False"/>
-    </StackPanel>
+	 <Button  x:Name="ReplayButton" 
+			  Content="Replay Game" 
+		      HorizontalAlignment="Center" 
+		      VerticalAlignment="Center" />
+
+	</StackPanel>
   </Grid>
 
   </Grid>
