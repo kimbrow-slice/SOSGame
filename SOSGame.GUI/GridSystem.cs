@@ -4,6 +4,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using System;
 using SOSGame.Logic;
+using System.Linq;
 
 namespace SOSGame.GUI
 {
@@ -25,6 +26,8 @@ namespace SOSGame.GUI
         public Action<bool>? OnTurnChanged;
         public Action? OnLetterCleared;
         public Action<string>? OnBannerDisplayed;
+        public bool AllowUnsafeGridSize { get; set; } = false;
+
 
         public GridSystem()
         {
@@ -38,24 +41,49 @@ namespace SOSGame.GUI
 
         public void SetGridSize(int newSize)
         {
-            if (newSize < 3 || newSize > 12)
-                throw new ArgumentException("ERR: The grid size must be between \n 3 and 12.");
+            Console.WriteLine($"[DEBUG] SetGridSize called with value: {newSize}");
+            Console.WriteLine($"[DEBUG] AllowUnsafeGridSize: {AllowUnsafeGridSize}");
+
+            if (!AllowUnsafeGridSize && (newSize < 3 || newSize > 12))
+            {
+                Console.WriteLine("[DEBUG] Grid size check failed. Blocking value.");
+                throw new ArgumentException("Grid size invalid.");
+            }
 
             gridSize = newSize;
+
+            Console.WriteLine("[DEBUG] Resetting board...");
             ResetBoard();
+
+            Console.WriteLine("[DEBUG] Creating game object...");
 
             if (parentWindow != null)
             {
-                if (parentWindow.IsGeneralGameModeSelected)
-                    game = new GeneralGame(gridSize, msg => OnBannerDisplayed?.Invoke(msg));
+                if (parentWindow.IsVulnerableGameSelected)
+                {
+                    Console.WriteLine("[DEBUG] Instantiating VulnerableGame.");
+                    game = new VulnerableGame(newSize);
+                }
+                else if (parentWindow.IsGeneralGameModeSelected)
+                {
+                    Console.WriteLine("[DEBUG] Instantiating GeneralGame.");
+                    game = new GeneralGame(newSize, msg => OnBannerDisplayed?.Invoke(msg));
+                }
                 else
-                    game = new SimpleGame(gridSize, msg => OnBannerDisplayed?.Invoke(msg));
+                {
+                    Console.WriteLine("[DEBUG] Instantiating SimpleGame.");
+                    game = new SimpleGame(newSize, msg => OnBannerDisplayed?.Invoke(msg));
+                }
             }
             else
             {
-                game = new SimpleGame(gridSize);
+                Console.WriteLine("[DEBUG] No parentWindow. Using fallback.");
+                game = new SimpleGame(newSize);
             }
         }
+
+
+
 
         public void SetCellContent(int row, int col, char letter)
         {
@@ -131,6 +159,7 @@ namespace SOSGame.GUI
             this.Children.Add(overlayCanvas);
         }
 
+
         public void SetGameLogic(BaseGame logic)
         {
             game = logic;
@@ -199,5 +228,6 @@ namespace SOSGame.GUI
                 overlayCanvas.Children.Add(shapeLine);
             }
         }
+
     }
 }
