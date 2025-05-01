@@ -1,6 +1,8 @@
 # SOSGame
 This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against as Player vs Player, Player vs Computer, or Computer vs Computer. The final release version of The SOS Game will contain three game modes: **Simple Game**, **General Game**, and **Vulnerable Game** which showcases a crafted LOLBin exploitation path via mshta.exe. 
 
+**NOTE** The RSA Key and AES key used are are left for educational purposes.
+
 ## Game Features
 - Simple Game Mode - End game condition is determined by the first SOS sequence.
 - General Game Mode - Final score is dictated by the collective number of SOS sequences completed by each player.
