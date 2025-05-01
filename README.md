@@ -1,12 +1,31 @@
 # SOSGame
-This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against as Player vs Player, Player vs AI, or select an a Vulnerable Game State which allows the exploitation of a Use After Free memory issue. The final implementation will contain two game modes: **Simple Game** and **General Game**. 
+This project is graded based on the development of the SOS game. Two Players aim to create the sequence "S-O-S" on an (n x n) grid system within the games GUI. Players will have the option to either play against as Player vs Player, Player vs Computer, or Computer vs Computer. The final release version of The SOS Game will contain three game modes: **Simple Game**, **General Game**, and **Vulnerable Game** which showcases a crafted LOLBin exploitation path via mshta.exe. 
 
 ## Game Features
 - Simple Game Mode - End game condition is determined by the first SOS sequence.
 - General Game Mode - Final score is dictated by the collective number of SOS sequences completed by each player.
-- Human vs Human Player Mode
-- Player vs AI Mode
-- **New Feature [Software Security]:** Vulnerable Game State - Allow a bad actor to dispose a stream to or introduce a race condition where it is freed but still accessible.
+- Human vs Human  Mode
+- Player vs Computer Mode
+- Computer vs Computer Mode
+- **Software Security:** Triggers execution of a hidden, encrypted payload by abusing mshta.exe, a trusted Windows binary (LOLBAS). When a specific condition ```(gridSize == 13)``` is met, AES and RSA-wrapped resources ```(payload.enc, aeskey.enc, private_key.xml)``` are decrypted, dropped into ```%TEMP%```, and executed via ```mshta.exe```, simulating code execution tactics often used by bad actors and within red team operations.
+
+
+<details>
+  <summary> MITRE ATT&CK Mapping</summary>
+
+  
+| Technique | Description | ID |
+|----------|-------------|----|
+| **Signed Binary Proxy Execution: MSHTA** | Executes HTA content through `mshta.exe` | [T1218.005](https://attack.mitre.org/techniques/T1218/005/) |
+| **Obfuscated Files or Information** | Encrypts payloads with AES+RSA to avoid detection | [T1027](https://attack.mitre.org/techniques/T1027/) |
+| **Ingress Tool Transfer** | Drops payload to local file system (`%TEMP%`) | [T1105](https://attack.mitre.org/techniques/T1105/) |
+| **Scripting: VBScript** | Executes script logic via `.hta` format | [T1059.005](https://attack.mitre.org/techniques/T1059/005/) |
+| **User Execution (Logic Flaw Trigger)** | Custom logic-based trigger on `gridSize == 13` | [T1204](https://attack.mitre.org/techniques/T1204/) |
+| **Indicator Removal on Host** | Deletes the payload (`payload.hta`) after execution | [T1070.004](https://attack.mitre.org/techniques/T1070/004/) |
+
+</details>
+
+
 
 ## Requirements
 - Develop game with an object-oriented programming language (C#)
@@ -26,11 +45,3 @@ This project is graded based on the development of the SOS game. Two Players aim
  - [AvaloniaUI Documentation](https://docs.avaloniaui.net/docs/)
  - [AvaloniaUI Styling Guide](https://docs.avaloniaui.net/docs/0.10.x/styling/styles#pseudoclasses)
  - [C# Style Guide](https://google.github.io/styleguide/csharp-style.html)
-
-
-### Sprint 3 Features:
-1. **Completed Feature[LOGIC]:** Complete Win Condition checks for both SIMPLE and GENERAL game modes
-2. **Completed Feature[GUI]:** Create a dynamic scoreboard into the GUI
-3. **Completed Feature[GUI]:GUI** Update for SOS sequence completion
-4. **Completed Feature[Code Readability]:** Create a dedicated Styles.axaml file for all GUI styling
-5. **Completed Feature[Code Readability]:** Add a .gitignore for all build files
